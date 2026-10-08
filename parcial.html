@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1f3347"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SCPI"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>Parcial I · Control en Producción</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: hoja de examen — cabecera con marcador, preguntas numeradas en una columna, barra de corrección fija abajo */
+:root{
+  --bg:#eef1f4; --panel:#ffffff; --ink:#1c2630; --muted:#5b6875; --line:#cfd6de;
+  --accent:#e8691c; --accent-ink:#ffffff; --steel:#2f4a63; --steel-soft:#e3eaf1;
+  --ok:#2f8a4c; --ok-soft:#dcf0e2; --bad:#c23b32; --bad-soft:#f7dfdc; --warn:#9a6a00; --warn-soft:#fbf0d4; --sel:#fbe3d3;
+  --f-display:"Saira Condensed","Arial Narrow",sans-serif;
+  --f-body:"Source Sans 3",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a20; --panel:#1d252d; --ink:#e6ebf0; --muted:#9aa7b3; --line:#34414d;
+  --accent:#f08a45; --accent-ink:#1a1106; --steel:#8fb3d3; --steel-soft:#26333f;
+  --ok:#5cc07c; --ok-soft:#1d3527; --bad:#ec6f64; --bad-soft:#3d2220; --warn:#e6b84a; --warn-soft:#3a3018; --sel:#43301f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a20; --panel:#1d252d; --ink:#e6ebf0; --muted:#9aa7b3; --line:#34414d;
+  --accent:#f08a45; --accent-ink:#1a1106; --steel:#8fb3d3; --steel-soft:#26333f;
+  --ok:#5cc07c; --ok-soft:#1d3527; --bad:#ec6f64; --bad-soft:#3d2220; --warn:#e6b84a; --warn-soft:#3a3018; --sel:#43301f; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-body);padding-inline:16px;padding-block:20px 110px}
+.wrap{max-width:780px;margin:0 auto;display:grid;gap:14px}
+header{display:grid;gap:6px}
+.eyebrow{font:500 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font:700 clamp(28px,5vw,40px)/1.02 var(--f-display);margin:0;text-wrap:balance}
+.inst{background:var(--steel-soft);border-radius:12px;padding:12px 14px;font-size:14.5px;margin:4px 0 0}
+.inst b{font-weight:700}
+.q{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:10px}
+.q.ok{border-color:var(--ok)} .q.bad{border-color:var(--bad)}
+.qh{display:flex;gap:10px;align-items:baseline}
+.num{font:700 22px/1 var(--f-display);color:var(--accent);min-width:1.6em;font-variant-numeric:tabular-nums}
+.stem{font-weight:700;font-size:16.5px;line-height:1.35;min-width:0}
+.kind{font:500 11.5px var(--f-mono);color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-left:auto;white-space:nowrap}
+.opts{display:grid;gap:6px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:15px;line-height:1.35}
+.opt input{margin-top:3px;width:18px;height:18px;accent-color:var(--accent);flex:none}
+.opt .l{font:700 15px var(--f-mono);color:var(--muted);flex:none}
+.opt:has(input:checked){background:var(--sel);border-color:var(--accent)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
+.fb{font-size:14.5px;border-radius:10px;padding:10px 12px;background:var(--steel-soft)}
+.fb .v{font-weight:700;margin-right:4px}
+.fb.ok .v{color:var(--ok)} .fb.bad .v{color:var(--bad)}
+.flag{display:block;margin-top:6px;color:var(--warn);font-weight:600;font-size:13.5px}
+.dock{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+.dock .in{max-width:780px;margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.score{font:700 24px/1 var(--f-display);font-variant-numeric:tabular-nums;margin-right:auto}
+.score small{display:block;font:500 11.5px var(--f-mono);color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.btn{font:600 15px var(--f-body);border:1.5px solid var(--line);background:transparent;color:var(--ink);padding:10px 16px;border-radius:10px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){.opt,.q{transition:background .15s,border-color .15s}}
+</style>
+<style>
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+button,a,label,input{touch-action:manipulation}
+@media (max-width:620px){.sn{gap:8px}.sn a.l{padding:8px 10px}}
+.wrap>*{min-width:0}body{overflow-wrap:break-word}
+.views{flex-wrap:wrap;right:12px}
+@media (max-width:620px){.vb{padding:5px 8px;font-size:12px}}
+</style></head><body>
+<style>
+.sn{--sn-bg:#1f3347;--sn-ink:#eef3f7;--sn-mut:#a9bccd;--sn-acc:#e8691c;
+ position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin:-20px -16px 18px;padding:8px 16px;background:var(--sn-bg);display:flex;gap:14px;align-items:center;font:600 14px "Source Sans 3",system-ui,sans-serif;box-shadow:0 6px 18px -10px rgba(0,0,0,.5)}
+.sn .b{font:700 19px/1 "Saira Condensed","Arial Narrow",sans-serif;color:var(--sn-ink);text-decoration:none;white-space:nowrap;letter-spacing:.02em}
+.sn .b span{color:var(--sn-acc)}
+.sn ul{display:flex;gap:4px;list-style:none;margin:0;padding:0;overflow-x:auto;scrollbar-width:none;min-width:0}
+.sn ul::-webkit-scrollbar{display:none}
+.sn a.l{display:block;color:var(--sn-mut);text-decoration:none;padding:6px 10px;border-radius:8px;white-space:nowrap}
+.sn a.l:hover{color:var(--sn-ink);background:rgba(255,255,255,.08)}
+.sn a.l[aria-current="page"]{color:#fff;background:var(--sn-acc)}
+.sn a:focus-visible{outline:3px solid var(--sn-acc);outline-offset:2px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sn{--sn-bg:#0d151d}}
+:root[data-theme="dark"] .sn{--sn-bg:#0d151d}
+@media (max-width:620px){.sn .b{display:none}}
+</style><nav class="sn" aria-label="Secciones"><a class="b" href="index.html">SCPI<span> · 16 oct</span></a><ul><li><a class="l" href="index.html">Inicio</a></li><li><a class="l" href="plan.html">Plan 1–15 oct</a></li><li><a class="l" href="tests.html">Tests por tema</a></li><li><a class="l" href="repaso.html">Chuleta</a></li><li><a class="l" href="parcial.html" aria-current="page">Parcial I</a></li><li><a class="l" href="medidores-2d.html">Medidores y válvulas 2D</a></li><li><a class="l" href="medidores-3d.html">Medidores y válvulas 3D</a></li></ul></nav>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Sistemas de Control en la Producción Industrial · 2º GIQI · Curso 2025/26</div>
+    <h1>Examen Teoría · Parcial I · Ejercicio 1</h1>
+    <p class="inst"><b>Instrucciones:</b> Seleccione verdadero o falso, cuando corresponda, o elija entre una o más de una respuesta correcta. Solo puntuarán aquellas respuestas totalmente correctas, no puntuando respuestas parciales o incorrectas. <b>(2,5 puntos)</b></p>
+  </header>
+  <div id="quiz" class="wrap" style="gap:14px"></div>
+</div>
+
+<div class="dock"><div class="in">
+  <div class="score"><small>Nota</small><span id="score">– / 2,5</span></div>
+  <button class="btn" id="reset">Borrar</button>
+  <button class="btn primary" id="check">Corregir</button>
+</div></div>
+
+<script>
+/* sol: índices correctos. note: explicación. doubt: marcar para revisar con apuntes */
+const Q=[
+ {s:"Las empresas pueden clasificarse según:",o:[
+  "Su actividad económica, su tamaño, la procedencia del capital y el ámbito de actuación",
+  "Su actividad económica, la procedencia del capital, el ámbito de actuación y el área de producción",
+  "Su actividad económica, su tamaño, la procedencia del capital, y su utilidad"],sol:[0],
+  note:"Los cuatro criterios clásicos son actividad económica, tamaño, procedencia del capital y ámbito de actuación. «Área de producción» y «utilidad» no son criterios de clasificación."},
+ {s:"La estructura de producción de una empresa consta de…",o:[
+  "Ingeniería industrial, planteamiento y control de la producción, fabricación, abastecimiento, control de calidad, ingeniería de planta y seguridad industrial",
+  "Ingeniería de producto, de proceso e industrial, planteamiento y control de la producción, fabricación, abastecimiento, control de calidad, ingeniería de planta y seguridad industrial",
+  "Ingeniería de producto, de proceso e industrial, planteamiento y control de la producción, abastecimiento, control de calidad, ingeniería de planta y seguridad industrial"],sol:[1],
+  note:"Es la lista completa. A la (a) le faltan la ingeniería de producto y la de proceso, y a la (c) le falta fabricación. Fíjate en qué falta en cada opción."},
+ {s:"Los sistemas de planificación y control de la producción…",o:[
+  "Pueden ser de empuje o de arrastre en función de cómo se inicie la producción",
+  "Se clasifican en cuatro tipos diferentes: MRP, HPP, JIT, OPT",
+  "Los sistemas JIT y OPT se inician por la decisión del suministrador",
+  "Todas son correctas"],sol:[0],
+  note:"Empuje (push): la producción la inicia el suministrador fabricando para stock. Arrastre (pull): la inician los pedidos del cliente. La (b) es falsa porque el Tema 2 recoge siete sistemas (MRP, MRP II, ERP, JIT, OPT, MES y HPP), no cuatro. La (c) es falsa porque el JIT funciona por arrastre."},
+ {s:"Los niveles de automatización implican una jerarquización piramidal que consta de:",o:[
+  "Elementos de campo, elementos de control, supervisión, planificación y gestión de empresas",
+  "Nivel de proceso, nivel de estación, nivel de célula, nivel de área o planta, nivel de factoría",
+  "Ninguna de las anteriores es correcta"],sol:[0],
+  note:"Según el Tema 2, la pirámide CIM tiene cinco niveles: 0 campo, 1 control, 2 supervisión, 3 planificación y 4 gestión de empresa. La (b) usa otra nomenclatura que no aparece en tus apuntes."},
+ {s:"En la automatización integral de la producción…",o:[
+  "El nivel de control incluye el control supervisor, el control digital directo y el control distribuido para informar al usuario de las variables y alarmas",
+  "En el nivel 2 de supervisión se programa la producción, se hace el control de inventarios, la gestión de compras",
+  "El nivel de gestión de empresa o factoría es el nivel más alto y se encarga de emitir al nivel 3 la información acerca de la ingeniería de producto y de proceso",
+  "Todas las anteriores son correctas"],sol:[0,2],
+  note:"(a) es correcta: en tus apuntes, el nivel 1 «informa al usuario de la situación de las variables y alarmas» e incluye el control supervisor, el DDC y el control distribuido. (b) es falsa: programar la producción, controlar inventarios y gestionar compras es del nivel 3 (planificación). (c) es correcta: el nivel 4 emite al nivel 3 la información de ingeniería de producto y de proceso."},
+ {s:"Indique cuáles de las siguientes variables pueden ser entrada de un modelo dinámico de un proceso químico:",o:[
+  "Controladas","Manipuladas","Perturbaciones"],sol:[1,2],
+  note:"Las entradas son las variables manipuladas y las perturbaciones. La variable controlada es la salida del modelo."},
+ {s:"El modelo matemático dinámico de un proceso químico permite",o:[
+  "Determinar si una variable puede utilizarse para controlar otra",
+  "No se utiliza actualmente",
+  "Calcular directamente los parámetros del controlador",
+  "Ninguna de las anteriores"],sol:[0],
+  note:"El Tema 4 dice que los modelos dinámicos sirven para el emparejamiento de variables al formar los lazos de control (saber qué variable controla a cuál), los límites de la acción de control, su dificultad y la sensibilidad del sistema. No calculan directamente los parámetros del controlador."},
+ {s:"En el control anticipativo hay que esperar a que se produzca el error para empezar a corregir la variable controlada",o:["Verdadero","Falso"],sol:[1],tf:true,
+  note:"Falso. El anticipativo (feedforward) mide la perturbación y corrige antes de que aparezca el error. El que espera al error es el control por realimentación (feedback)."},
+ {s:"El sistema de control automático de una planta química está constituido por los siguientes elementos básicos mínimos:",o:[
+  "Sensor, transmisor, controlador y elemento final de control",
+  "Proceso, transmisor, controlador y elemento final de control",
+  "Proceso, transmisor, controlador y válvula",
+  "Sensor, proceso, transmisor, controlador y elemento final de control"],sol:[0],
+  note:"Los cuatro elementos básicos del sistema de control son sensor, transmisor, controlador y elemento final de control. El proceso es lo que se controla, no un elemento del sistema de control."},
+ {s:"En el control anticipativo suelen medirse las variables de perturbación.",o:["Verdadero","Falso"],sol:[0],tf:true,
+  note:"Verdadero. Es la base del control anticipativo: mides la perturbación y actúas antes de que afecte a la variable controlada."},
+ {s:"Los elementos finales de control…",o:[
+  "Son instrumentos que informan del valor de las variables del proceso",
+  "Reciben información de las variables en cada momento y las procesan según el algoritmo de control sintonizado",
+  "Pueden ser válvulas",
+  "Son equipos que manipulan variables del proceso conforme a las señales que reciben de los controladores"],sol:[2,3],
+  note:"La (a) describe los sensores/transmisores y la (b) el controlador. El elemento final (normalmente una válvula, pero también una bomba de velocidad variable, una resistencia…) actúa sobre la variable manipulada según la señal del controlador."},
+ {s:"La respuesta transitoria de un lazo de control para una entrada escalón…",o:[
+  "Sobreamortiguada, si es oscilatoria de amplitud creciente",
+  "Inestable, si tiene forma sigmoidal",
+  "Subamortiguada, si es oscilatoria de amplitud creciente",
+  "Subamortiguada, si es oscilatoria de amplitud decreciente"],sol:[3],
+  note:"Subamortiguada: oscila y las oscilaciones se van apagando. Si la amplitud crece es inestable. La forma sigmoidal (en S, sin oscilar) es sobreamortiguada."},
+ {s:"La función de transferencia del proceso define la relación de la variable controlada respecto de las variables de entrada",o:["Verdadero","Falso"],sol:[0],tf:true,
+  note:"Verdadero. Relaciona la salida (controlada) con cada entrada (manipulada o perturbación), en variables de desviación y en el dominio de Laplace."}
+];
+const L="abcd";
+const box=document.getElementById("quiz");
+box.innerHTML=Q.map((q,i)=>{
+  const multi=!q.tf, type=multi?"checkbox":"radio";
+  return `<section class="q" id="q${i}">
+   <div class="qh"><span class="num">${i+1})</span><span class="stem">${q.s}</span><span class="kind">${q.tf?"V / F":"una o más"}</span></div>
+   <div class="opts">${q.o.map((t,j)=>`<label class="opt" data-j="${j}"><input type="${type}" name="q${i}" id="q${i}o${j}" value="${j}"><span class="l">${L[j]}.</span><span>${t}</span></label>`).join("")}</div>
+   <div class="fb" hidden></div></section>`}).join("");
+
+function sel(i){return [...document.querySelectorAll(`input[name=q${i}]:checked`)].map(x=>+x.value)}
+function check(){
+  let good=0;
+  Q.forEach((q,i)=>{
+    const s=sel(i),sec=document.getElementById("q"+i),fb=sec.querySelector(".fb");
+    const ok=s.length===q.sol.length&&q.sol.every(x=>s.includes(x));
+    if(ok)good++;
+    sec.classList.toggle("ok",ok);sec.classList.toggle("bad",!ok);
+    sec.querySelectorAll(".opt").forEach(o=>{const j=+o.dataset.j;o.classList.toggle("right",q.sol.includes(j));o.classList.toggle("wrong",s.includes(j)&&!q.sol.includes(j))});
+    fb.hidden=false;fb.className="fb "+(ok?"ok":"bad");
+    const ans=q.sol.map(j=>L[j]).join(" y ");
+    fb.innerHTML=`<span class="v">${ok?"Correcta.":(s.length?"Incorrecta.":"Sin responder.")}</span> Respuesta: <b>${ans}</b>. ${q.note}`+(q.doubt?`<span class="flag">Compruébala con tus apuntes: depende de cómo lo explique tu profesor.</span>`:"");
+  });
+  const nota=(good*2.5/Q.length).toFixed(2).replace(".",",");
+  document.getElementById("score").textContent=`${good}/${Q.length} · ${nota} / 2,5`;
+}
+function reset(){
+  document.querySelectorAll("#quiz input").forEach(x=>x.checked=false);
+  document.querySelectorAll(".q").forEach(s=>{s.classList.remove("ok","bad");s.querySelector(".fb").hidden=true});
+  document.querySelectorAll(".opt").forEach(o=>o.classList.remove("right","wrong"));
+  document.getElementById("score").textContent="– / 2,5";window.scrollTo({top:0});
+}
+document.getElementById("check").onclick=check;
+document.getElementById("reset").onclick=reset;
+</script>
+
+
+<script>
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script></body></html>

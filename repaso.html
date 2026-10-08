@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1f3347"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SCPI"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>Chuleta SCPI</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: chuleta de repaso para el móvil — índice de chips arriba, una tarjeta por tema con tablas compactas que se desplazan en horizontal si no caben */
+:root{--bg:#eef1f4;--panel:#fff;--ink:#1c2630;--muted:#5b6875;--line:#cfd6de;--accent:#e8691c;--steel:#2f4a63;--steel-soft:#e3eaf1;--bad:#c23b32;--bad-soft:#f7dfdc;
+ --f-display:"Saira Condensed","Arial Narrow",sans-serif;--f-body:"Source Sans 3",system-ui,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,monospace}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141a20;--panel:#1d252d;--ink:#e6ebf0;--muted:#9aa7b3;--line:#34414d;--accent:#f08a45;--steel:#8fb3d3;--steel-soft:#26333f;--bad:#ec6f64;--bad-soft:#3d2220;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141a20;--panel:#1d252d;--ink:#e6ebf0;--muted:#9aa7b3;--line:#34414d;--accent:#f08a45;--steel:#8fb3d3;--steel-soft:#26333f;--bad:#ec6f64;--bad-soft:#3d2220;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);padding-inline:16px;padding-block:20px 60px;margin:0}
+.wrap{max-width:860px;margin:0 auto;display:grid;gap:16px}
+.eyebrow{font:500 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font:700 clamp(30px,7vw,46px)/1 var(--f-display);margin:4px 0 0}
+.lead{margin:6px 0 0;color:var(--muted);max-width:65ch}
+.idx{display:flex;flex-wrap:wrap;gap:6px}
+.idx a{font:600 14px var(--f-body);text-decoration:none;color:var(--ink);background:var(--panel);border:1.5px solid var(--line);padding:6px 12px;border-radius:999px}
+.idx a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+section.c{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;scroll-margin-top:64px}
+section.c h2{font:700 24px/1.1 var(--f-display);margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+section.c h2 .k{font:600 12px var(--f-mono);color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0}
+table{border-collapse:collapse;width:100%;min-width:420px;font-size:15px}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--steel-soft)}
+td b{color:var(--ink)}
+ul{margin:6px 0;padding-left:20px}li{margin:3px 0}
+.trap{background:var(--bad-soft);border-left:4px solid var(--bad);border-radius:8px;padding:8px 12px;margin:8px 0 0;font-size:15px}
+.trap b{color:var(--bad)}
+.num{font-family:var(--f-mono);font-weight:600}
+</style>
+<style>
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+button,a,label,input{touch-action:manipulation}
+@media (max-width:620px){.sn{gap:8px}.sn a.l{padding:8px 10px}}
+.wrap>*{min-width:0}body{overflow-wrap:break-word}
+.views{flex-wrap:wrap;right:12px}
+@media (max-width:620px){.vb{padding:5px 8px;font-size:12px}}
+</style></head><body>
+<style>
+.sn{--sn-bg:#1f3347;--sn-ink:#eef3f7;--sn-mut:#a9bccd;--sn-acc:#e8691c;
+ position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin:-20px -16px 18px;padding:8px 16px;background:var(--sn-bg);display:flex;gap:14px;align-items:center;font:600 14px "Source Sans 3",system-ui,sans-serif;box-shadow:0 6px 18px -10px rgba(0,0,0,.5)}
+.sn .b{font:700 19px/1 "Saira Condensed","Arial Narrow",sans-serif;color:var(--sn-ink);text-decoration:none;white-space:nowrap;letter-spacing:.02em}
+.sn .b span{color:var(--sn-acc)}
+.sn ul{display:flex;gap:4px;list-style:none;margin:0;padding:0;overflow-x:auto;scrollbar-width:none;min-width:0}
+.sn ul::-webkit-scrollbar{display:none}
+.sn a.l{display:block;color:var(--sn-mut);text-decoration:none;padding:6px 10px;border-radius:8px;white-space:nowrap}
+.sn a.l:hover{color:var(--sn-ink);background:rgba(255,255,255,.08)}
+.sn a.l[aria-current="page"]{color:#fff;background:var(--sn-acc)}
+.sn a:focus-visible{outline:3px solid var(--sn-acc);outline-offset:2px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sn{--sn-bg:#0d151d}}
+:root[data-theme="dark"] .sn{--sn-bg:#0d151d}
+@media (max-width:620px){.sn .b{display:none}}
+</style><nav class="sn" aria-label="Secciones"><a class="b" href="index.html">SCPI<span> · 16 oct</span></a><ul><li><a class="l" href="index.html">Inicio</a></li><li><a class="l" href="plan.html">Plan 1–15 oct</a></li><li><a class="l" href="tests.html">Tests por tema</a></li><li><a class="l" href="repaso.html" aria-current="page">Chuleta</a></li><li><a class="l" href="parcial.html">Parcial I</a></li><li><a class="l" href="medidores-2d.html">Medidores y válvulas 2D</a></li><li><a class="l" href="medidores-3d.html">Medidores y válvulas 3D</a></li></ul></nav>
+<div class="wrap">
+ <header><div class="eyebrow">Para repasar en el móvil · examen viernes 16 oct</div><h1>Chuleta de errores</h1>
+ <p class="lead">Todo lo que fallaste en los tests del 7 de octubre, ordenado por tema. Léela antes de repetir cada test, y repasa los fallos en «Tests → Repasar mis fallos».</p></header>
+ <nav class="idx" aria-label="Temas">
+  <a href="#trucos">Trucos test</a><a href="#t2">T2</a><a href="#t4">T4</a><a href="#t5">T5</a><a href="#t6">T6</a><a href="#t7">T7</a><a href="#t81">8.1</a><a href="#t82">8.2</a><a href="#t83">8.3</a><a href="#t84">8.4</a><a href="#t9">T9</a><a href="#t10">T10</a>
+ </nav>
+
+ <section class="c" id="trucos"><h2>Cómo leer el test <span class="k">vale para todo</span></h2>
+  <ul>
+   <li>Cada opción es un <b>verdadero/falso aparte</b>: no busques «la buena», comprueba todas.</li>
+   <li>Si dos te parecen ciertas, mira si la d) es <b>«Todas son correctas»</b>.</li>
+   <li>Desconfía de <b>siempre, nunca, todas, solo</b> y lee dos veces las preguntas con <b>NO / falsa / excepto</b>.</li>
+   <li>Si el enunciado da un número («cuatro tipos»…), suele ser la trampa.</li>
+  </ul>
+ </section>
+
+ <section class="c" id="t2"><h2>Tema 2 <span class="k">Planificación</span></h2>
+  <ul>
+   <li>Sistemas de planificación: <b>siete</b> → MRP, MRP II, ERP, JIT, OPT, MES, HPP.</li>
+   <li>Toyota → <b>JIT</b> · SAP/Oracle → <b>ERP</b> · farmacéutica/química → <b>OPT</b>.</li>
+   <li>ERP: producción + logística + finanzas + RR. HH. y es el <b>nivel 4</b> de la pirámide CIM. Control en tiempo real de líneas → <b>MES</b>.</li>
+   <li>CIM: integra producción y gestión <b>y</b> es una metodología/filosofía. No es CAD.</li>
+   <li>Lotes: cantidad limitada por vez, máquinas iguales en baterías. Encargo: tras el pedido (satélite). Continua: máquinas especializadas en línea.</li>
+  </ul>
+  <div class="tw"><table><tr><th>Control (nivel 1)</th><th>Qué hace el PC</th></tr>
+   <tr><td><b>Supervisor</b></td><td>solo fija las consignas de los controladores</td></tr>
+   <tr><td><b>DDC</b> (digital directo)</td><td>controla los lazos desde la sala de control</td></tr>
+   <tr><td><b>Distribuido</b> (DCS)</td><td>PC repartidos por planta en red; no es un controlador central</td></tr></table></div>
+ </section>
+
+ <section class="c" id="t4"><h2>Tema 4 <span class="k">Laplace y bloques</span></h2>
+  <ul>
+   <li>Respuesta a una entrada: <b>numerador = camino directo desde esa entrada hasta C</b>; denominador = 1 + lazo. Con N entre G1 y G2: <span class="num">G2/(1+G1G2H)</span>.</li>
+   <li>Superposición: suma de respuestas a cada entrada con las otras a 0. <b>Solo en sistemas lineales.</b></li>
+   <li>Mover ramificación de delante a detrás de P → poner <b>1/P</b> en la rama.</li>
+   <li>Escalón A → <span class="num">A/s</span> · rampa A·t → <span class="num">A/s²</span> · e<sup>−at</sup> → <span class="num">1/(s+a)</span>.</li>
+   <li>Discriminante &gt; 0 reales · = 0 múltiple · &lt; 0 complejas (senos y cosenos). Factor (s − 3) → raíz <b>+3</b>.</li>
+   <li>Régimen permanente: derivadas = 0. Rebosadero: <b>Fe = F</b> (volumen constante).</li>
+  </ul>
+ </section>
+
+ <section class="c" id="t5"><h2>Tema 5 <span class="k">Dinámica</span></h2>
+  <div class="tw"><table><tr><th>δ</th><th>Polos</th><th>Respuesta</th></tr>
+   <tr><td class="num">δ &gt; 1</td><td>reales negativos distintos</td><td><b>sobreamortiguada</b>, lenta, sin oscilar</td></tr>
+   <tr><td class="num">δ = 1</td><td>reales iguales</td><td><b>crítica</b>: la más rápida sin sobreoscilación</td></tr>
+   <tr><td class="num">0 &lt; δ &lt; 1</td><td>complejos</td><td><b>subamortiguada</b>: siempre hay sobreoscilación (también con 0,8)</td></tr>
+   <tr><td class="num">δ = 0</td><td>imaginarios puros</td><td>oscila con amplitud constante (inestable)</td></tr></table></div>
+  <ul><li>Multicapacitivo: sobreamortiguado y sigmoidal; más capacidades → más lento; con interacción, aún más lento (no oscila).</li>
+   <li>Retardo puro: <b>la misma señal desplazada tm</b>. Con tiempo muerto = orden superior.</li></ul>
+ </section>
+
+ <section class="c" id="t6"><h2>Tema 6 <span class="k">Bode y estabilidad</span></h2>
+  <div class="tw"><table><tr><th>Frecuencia</th><th>Qué pasa</th><th>Ahí miras</th></tr>
+   <tr><td><b>Crítica ωc</b></td><td>fase = <b>−180°</b></td><td>la RA → margen de ganancia</td></tr>
+   <tr><td><b>Cambio de ganancia</b></td><td>RA = 1 (0 dB)</td><td>la fase → margen de fase</td></tr></table></div>
+  <ul>
+   <li>RA en ωc: &lt; 1 estable · <b>= 1 oscila con amplitud constante</b> · &gt; 1 inestable.</li>
+   <li>Diseño: margen de fase <b>30–60°</b>; margen de ganancia 1,5–2,5 (3,5–8 dB).</li>
+   <li>Más margen → más estable pero <b>más lento</b>.</li>
+   <li>Criterio de Bode: RA y fase monótonas. No monótonas o polares → Nyquist.</li>
+   <li>Óptima: ligeramente subamortiguada, Mp ≤ 30 %. tc = 10→90 % · tr = 50 % · tp = primer pico.</li>
+   <li>Ancho de banda: módulo no cae más de 3 dB. Error estacionario: valor final, lím s·E(s); un P deja error.</li>
+   <li>Fase en Bode: <b>suma la de cada factor</b> (−90° por s, −arctg(ω/a) por polo). Si sale positiva con polos, está mal.</li>
+  </ul>
+ </section>
+
+ <section class="c" id="t7"><h2>Tema 7 <span class="k">Definiciones</span></h2>
+  <div class="tw"><table><tr><th>Definición</th><th>Nombre</th></tr>
+   <tr><td>Intervalo de medida (100–300 °C)</td><td><b>Rango</b></td></tr>
+   <tr><td>Superior − inferior del rango (200 °C)</td><td><b>Alcance (span)</b></td></tr>
+   <tr><td>Error con la variable en el límite inferior</td><td><b>Error de cero</b></td></tr>
+   <tr><td>Δlectura / Δvariable (10 mV/m)</td><td><b>Sensibilidad</b></td></tr>
+   <tr><td>Misma indicación, mismas condiciones y sentido</td><td><b>Repetibilidad</b></td></tr>
+   <tr><td>Tolerancia dada por el <b>fabricante</b></td><td><b>Precisión</b></td></tr>
+   <tr><td>Estímulo físico → otra energía (eléctrica)</td><td><b>Transductor</b></td></tr></table></div>
+  <ul>
+   <li>Regulación: mantiene la variable y da señal estándar (controlador, PLC). Actuación: mecanismo + actuador (válvula, motor). Elemento primario: <b>dentro del proceso</b>.</li>
+   <li>Por tamaño: convencional 50×50 cm, miniatura 15×15 mm. Por señal: neumático 3–15 psi, electrónico 4–20 mA. (Portátil/empotrado = montaje; digital/analógico = lectura.)</li>
+   <li>ISA: máx. 4 letras; sufijos FV-2A/2B. <b>Paralela</b> = cada letra reinicia (TIC-100, LIC-100). <b>Serie</b> = una sola secuencia.</li>
+   <li>Controlador en caja en planta → panel en el área de proceso.</li>
+   <li>Selección: variable → señal y lectura → función → características → seguridad.</li>
+  </ul>
+ </section>
+
+ <section class="c" id="t81"><h2>8.1 Temperatura</h2>
+  <div class="tw"><table><tr><th>Termopar</th><th>Metales</th><th>Rango</th><th>Dato</th></tr>
+   <tr><td><b>T</b></td><td>cobre–constantán</td><td class="num">−200 a 250 °C</td><td>único bajo cero</td></tr>
+   <tr><td><b>J</b></td><td>hierro–constantán</td><td class="num">0 a 750 °C</td><td>no resiste corrosión</td></tr>
+   <tr><td><b>K</b></td><td>cromel–alumel</td><td class="num">0 a 1300 °C</td><td>el más común, oxidantes</td></tr>
+   <tr><td><b>R/S</b></td><td>Pt–Pt/Rh</td><td class="num">0 a 1600 °C</td><td></td></tr></table></div>
+  <ul>
+   <li>Vidrio −196 a 500 · <b>bulbo −40 a 425</b> · bimetálico 0 a 500 · RTD −200 a 500 °C.</li>
+   <li>Rápidos: termopar y pirómetro. Media: RTD. Lentos: vidrio, bulbo, bimetálico, termistor.</li>
+   <li>Bulbo y capilar → fuelle o Bourdon. RTD: precisa y estable pero frágil.</li>
+   <li>Vaina: 0,5–0,75·D pero <b>nunca &lt; 10 cm</b>.</li>
+  </ul>
+ </section>
+
+ <section class="c" id="t82"><h2>8.2 Presión</h2>
+  <div class="tw"><table><tr><th>Medidor</th><th>Aplicación</th></tr>
+   <tr><td>Tubo en U</td><td>retorno de sistema hidráulico</td></tr>
+   <tr><td>Tubo inclinado</td><td>salida de bomba dosificadora</td></tr>
+   <tr><td>Bourdon</td><td>calderas, compresores</td></tr>
+   <tr><td><b>Fuelle</b></td><td><b>altímetros, vacío</b></td></tr>
+   <tr><td><b>Diafragma</b></td><td><b>farmacéutico, viscoso o corrosivo</b></td></tr>
+   <tr><td>Galgas</td><td>inyección, ABS</td></tr>
+   <tr><td>Capacitivo</td><td>ventiladores médicos</td></tr></table></div>
+  <ul><li>Tubo en U e inclinado: P estática máx. <b>10 kg/cm²</b>, 0,2–1,2 m, lentos.</li>
+   <li>Problemas de instalación → líneas de derivación y sello químico.</li></ul>
+ </section>
+
+ <section class="c" id="t83"><h2>8.3 Caudal</h2>
+  <div class="tw"><table><tr><th>Medidor</th><th>Aplicación</th><th>Por qué</th></tr>
+   <tr><td><b>Vortex</b></td><td>vapor saturado, calderas</td><td>el vapor no conduce (magnético no)</td></tr>
+   <tr><td><b>Annubar</b></td><td>vapor sobrecalentado, chimeneas</td><td>promedia todo el diámetro</td></tr>
+   <tr><td><b>Turbina</b></td><td>combustibles, aceite hidráulico</td><td>líquidos limpios</td></tr>
+   <tr><td>Placa de impacto</td><td>pulpas, leche, zumos</td><td>aguanta sólidos</td></tr>
+   <tr><td>Magnético</td><td>aguas residuales</td><td>solo conductores · <b>Faraday</b></td></tr></table></div>
+  <ul><li>ΔP: líquidos &lt; 50 cP <b>y gases y vapor</b>; −200 a 1000 °C. Orificio integral → caudales <b>muy bajos</b>.</li>
+   <li>Vortex → <b>Von Kármán</b>. Troncocónico = rotámetro (no es desplazamiento positivo).</li></ul>
+ </section>
+
+ <section class="c" id="t84"><h2>8.4 Nivel de sólidos</h2>
+  <div class="tw"><table><tr><th>Medidor</th><th>Tipo</th><th>Uso</th></tr>
+   <tr><td>Cono suspendido</td><td>detector</td><td>harina (polvo fino)</td></tr>
+   <tr><td>Paletas rotativas</td><td>detector</td><td>granulados, pellets, arroz</td></tr>
+   <tr><td>Diafragma</td><td>detector</td><td>sólidos en pared</td></tr>
+   <tr><td><b>Microondas</b></td><td>detector, <b>sin contacto</b></td><td>abrasivos/corrosivos; Doppler: solo sólido en movimiento</td></tr>
+   <tr><td>Peso móvil</td><td><b>continuo</b></td><td>silos muy altos</td></tr>
+   <tr><td>Báscula</td><td><b>continuo</b></td><td>tolvas dosificadoras</td></tr></table></div>
+ </section>
+
+ <section class="c" id="t9"><h2>Tema 9 <span class="k">Transmisión</span></h2>
+  <div class="tw"><table><tr><th>Dato</th><th>Valor</th></tr>
+   <tr><td>Sin transmisor, hasta</td><td class="num">30 m</td></tr>
+   <tr><td>Neumática</td><td class="num">3–15 psi</td></tr>
+   <tr><td>Eléctrica (ISA)</td><td class="num">4–20 mA c.c.</td></tr>
+   <tr><td>Digital</td><td class="num">0 o 5 V</td></tr>
+   <tr><td>Aire del I/P</td><td class="num">≈ 20 psi</td></tr></table></div>
+  <ul>
+   <li><b>Cero vivo</b>: 0 % = 3 psi / 4 mA, así que 0 = avería.</li>
+   <li>Directa: termopar. Indirecta: galgas, capacitivo, inductivo (primero desplazamiento).</li>
+   <li>Explosión o ruido eléctrico → <b>neumática</b>.</li>
+   <li>Amplificador tobera-obturador → <b>relé neumático / válvula piloto</b>. I/P: bobina → aleta → aire piloto → aire principal.</li>
+   <li>Multiplexión: varias señales por un cable, menos coste y más distancia, <b>pero no lee a la vez</b>.</li>
+   <li>Sensor más lento: <b>composición</b>. Presión rápida; temperatura y nivel lentos.</li>
+  </ul>
+ </section>
+
+ <section class="c" id="t10"><h2>Tema 10 <span class="k">Controladores</span></h2>
+  <div class="tw"><table><tr><th>Acción</th><th>Hace</th><th>Ojo</th></tr>
+   <tr><td><b>P</b></td><td>corrige ∝ error</td><td>deja error; ↑Kc → ↓error, ↓MG (menos estable)</td></tr>
+   <tr><td><b>I</b></td><td>elimina el error permanente</td><td>sola es muy lenta</td></tr>
+   <tr><td><b>D</b></td><td>anticipa, estabiliza</td><td>no elimina error; amplifica ruido</td></tr></table></div>
+  <ul><li>P: nivel y presión de gases · <b>PI: caudal</b> · <b>PID: temperatura y composición</b>.</li>
+   <li>Se estudian sobre primer orden con tiempo muerto, sin perturbaciones, escalón en la consigna.</li></ul>
+ </section>
+</div>
+
+<script>
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script></body></html>
